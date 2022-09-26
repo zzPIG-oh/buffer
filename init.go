@@ -4,30 +4,37 @@ import (
 	"encoding/json"
 	"io"
 	"os"
-	goSync "sync"
+	"sync"
 	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
 )
 
 var (
-	once goSync.Once
+	once sync.Once
 )
 
 // Init
 //	加载指定的数据源
-func Init() {
+func init() {
 	once.Do(func() {
+		// maybe don`t need source
+		if defaultFile == "" {
+			return
+		}
+
 		fd, err := os.Open(defaultFile)
 		if err != nil {
 			log.DefaultLogger.Log(log.LevelFatal, "source.open error", err.Error())
 			return
 		}
+
 		bt, err := io.ReadAll(fd)
 		if err != nil {
 			log.DefaultLogger.Log(log.LevelFatal, "source.read error", err.Error())
 			return
 		}
+
 		json.Unmarshal(bt, &dict)
 	})
 

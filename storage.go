@@ -96,7 +96,9 @@ func (b *buffer) Hget(key, field string) (r Result) {
 			r = &result{result: val}
 			b.Hset(key, field, val)
 
-		} else {
+		}
+
+		if !r.IsEmpty() {
 			// 每取一次增加一次热度
 			atomic.AddInt64(&dict[key].hot, 1)
 		}

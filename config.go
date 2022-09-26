@@ -9,10 +9,9 @@ import (
 )
 
 var (
-	defaultFile           = "/opt/buffer.json"
+	defaultFile           = ""
 	defaultTTL    int64   = -1
 	defaultMemory float64 = 20
-	// defaultFile           = "buffer.json"
 )
 
 type (

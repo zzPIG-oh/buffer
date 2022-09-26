@@ -6,7 +6,6 @@ import (
 )
 
 func TestBuffer(t *testing.T) {
-	Init()
 	bc := NewBufferClient()
 	bl := bc.Hget("keyword", "show").IsEmpty()
 	rt := bc.Hget("keyword", "show").Interface()
@@ -15,7 +14,6 @@ func TestBuffer(t *testing.T) {
 
 func TestBufferSet(t *testing.T) {
 	defaultFile = "../../../buffer.json"
-	Init()
 	bc := NewBufferClient()
 
 	bl1 := bc.Hget("keyword", "zhangzhen").IsEmpty()
