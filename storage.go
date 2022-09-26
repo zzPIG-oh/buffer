@@ -2,11 +2,10 @@ package buffer
 
 import (
 	"context"
+	"log"
 	"sync"
 	"sync/atomic"
 	"time"
-
-	"github.com/go-kratos/kratos/v2/log"
 )
 
 // - inner
@@ -89,7 +88,7 @@ func (b *buffer) Hget(key, field string) (r Result) {
 
 			val, err := c.redis.HGet(context.Background(), key, field).Result()
 			if err != nil {
-				log.DefaultLogger.Log(log.LevelError, "Hget.error", err.Error())
+				log.Println("Hget.error", err.Error())
 				return
 			}
 

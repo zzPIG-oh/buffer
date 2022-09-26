@@ -3,11 +3,10 @@ package buffer
 import (
 	"encoding/json"
 	"io"
+	"log"
 	"os"
 	"sync"
 	"time"
-
-	"github.com/go-kratos/kratos/v2/log"
 )
 
 var (
@@ -25,13 +24,13 @@ func init() {
 
 		fd, err := os.Open(defaultFile)
 		if err != nil {
-			log.DefaultLogger.Log(log.LevelFatal, "source.open error", err.Error())
+			log.Println("source.open error:", err.Error())
 			return
 		}
 
 		bt, err := io.ReadAll(fd)
 		if err != nil {
-			log.DefaultLogger.Log(log.LevelFatal, "source.read error", err.Error())
+			log.Println("source.read error", err.Error())
 			return
 		}
 
