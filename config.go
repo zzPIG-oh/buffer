@@ -9,9 +9,10 @@ import (
 )
 
 var (
-	defaultFile           = ""
-	defaultTTL    int64   = -1
-	defaultMemory float64 = 20
+	defaultFile            = ""
+	defaultTTL     int64   = -1
+	defaultMemory  float64 = 20
+	defaultChannle         = "sync-local"
 )
 
 type (
@@ -22,6 +23,7 @@ type (
 		source   string
 		hasRedis bool
 		redis    *redis.Client
+		addr     string
 	}
 )
 
@@ -47,4 +49,8 @@ func SetRedis(client *redis.Client) {
 	}
 
 	c.hasRedis = true
+}
+
+func SetAddr(addr string) {
+	c.addr = addr
 }

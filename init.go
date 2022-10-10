@@ -1,9 +1,12 @@
 package buffer
 
 import (
+	"context"
 	"encoding/json"
+	"fast-buffer/util"
 	"io"
 	"log"
+	"net/http"
 	"os"
 	"sync"
 	"time"
@@ -13,28 +16,25 @@ var (
 	once sync.Once
 )
 
-// Init
+// Start
 //	加载指定的数据源
-func init() {
+func Start() {
+
 	once.Do(func() {
-		// maybe don`t need source
-		if defaultFile == "" {
-			return
-		}
 
-		fd, err := os.Open(defaultFile)
+		// 加载数据源
+		bt, err := read(defaultFile)
 		if err != nil {
-			log.Println("source.open error:", err.Error())
 			return
 		}
+		write(bt)
 
-		bt, err := io.ReadAll(fd)
-		if err != nil {
-			log.Println("source.read error", err.Error())
-			return
+		// 初始化http
+		if len(c.addr) > 0 {
+			http.HandleFunc("/fast-buffer/probe", probe)
+			http.ListenAndServe(c.addr, nil)
 		}
 
-		json.Unmarshal(bt, &dict)
 	})
 
 	go func() {
@@ -45,4 +45,56 @@ func init() {
 			patrol()
 		}
 	}()
+
+	go syncBuffer()
+}
+
+func read(file string) ([]byte, error) {
+
+	fd, err := os.Open(defaultFile)
+	if err != nil {
+		log.Println("source.open error", err.Error())
+		return nil, err
+	}
+
+	bt, err := io.ReadAll(fd)
+	if err != nil {
+		log.Println("source.read error", err.Error())
+		return nil, err
+	}
+
+	return bt, err
+}
+
+func write(bt []byte) {
+
+	// tmpMap--临时接受dict的值
+	// 数据源的格式应该为map[string]map[string]interface{}
+	tmpMap := map[string]map[string]interface{}{}
+
+	err := json.Unmarshal(bt, &tmpMap)
+	if err != nil {
+		log.Println("json.Unmarshal error", err.Error())
+		return
+	}
+
+	for k, v := range tmpMap {
+		dict[k] = &inner{
+			hash: v,
+			ttl:  -1,
+			hot:  9999, // 数据源的数据暂时全部不过期
+		}
+	}
+
+}
+
+func syncBuffer() {
+	if !c.hasRedis {
+		return
+	}
+	b := &buffer{}
+	for msg := range c.redis.PSubscribe(context.Background(), defaultChannle).Channel() {
+		k, f := util.Spilt(msg.String())
+		b.Hdel(k, f)
+	}
 }

@@ -2,6 +2,7 @@ package buffer
 
 import (
 	"context"
+	"fast-buffer/util"
 	"log"
 	"sync"
 	"sync/atomic"
@@ -55,7 +56,6 @@ func (b *buffer) Hset(key, field string, value interface{}) {
 		return
 	}
 
-	dictRW.Lock()
 	kv, ok := dict[key]
 	if !ok {
 		dict[key] = &inner{
@@ -65,17 +65,14 @@ func (b *buffer) Hset(key, field string, value interface{}) {
 			rw:  sync.RWMutex{},
 			ttl: defaultTTL,
 		}
-		dictRW.Unlock()
 		return
 	}
-	dictRW.Unlock()
 
-	kv.rw.Lock()
 	kv.hash[field] = value
-	kv.rw.Unlock()
 
 	if c.hasRedis {
 		c.redis.HSet(context.Background(), key, field, value)
+		b.refresh(key, field)
 	}
 
 }
@@ -107,11 +104,10 @@ func (b *buffer) Hget(key, field string) (r Result) {
 	// 加入读锁--防止此时并发出现map的更改
 	dictRW.RLock()
 	kv, ok := dict[key]
+	dictRW.RUnlock()
 	if !ok {
-		dictRW.RUnlock()
 		return &result{result: nil}
 	}
-	dictRW.RUnlock()
 
 	if kv.ttl > -1 && time.Since(time.Unix(kv.ttl, 0)) < 1 {
 		return &result{result: nil}
@@ -134,9 +130,7 @@ func (b *buffer) Hdel(key, field string) {
 	}
 	dictRW.RUnlock()
 
-	kv.rw.Lock()
 	delete(kv.hash, field)
-	kv.rw.Unlock()
 
 	if c.hasRedis {
 		c.redis.HDel(context.Background(), key, field)
@@ -147,4 +141,10 @@ func (b *buffer) Hdel(key, field string) {
 func (b *buffer) Exist(key string) bool {
 	_, ok := dict[key]
 	return ok
+}
+
+func (b *buffer) refresh(key, field string) {
+	if err := c.redis.Publish(context.Background(), defaultChannle, util.String(key, field)).Err(); err != nil {
+		log.Println("Hget.error", err.Error())
+	}
 }
