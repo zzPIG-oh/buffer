@@ -94,7 +94,7 @@ func syncBuffer() {
 	}
 	b := &buffer{}
 	for msg := range c.redis.PSubscribe(context.Background(), defaultChannle).Channel() {
-		k, f := util.Spilt(msg.String())
+		k, f := util.Spilt(msg.Payload)
 		b.Hdel(k, f)
 	}
 }
