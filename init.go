@@ -6,7 +6,6 @@ import (
 	"fast-buffer/util"
 	"io"
 	"log"
-	"net/http"
 	"os"
 	"sync"
 	"time"
@@ -28,13 +27,6 @@ func Start() {
 			return
 		}
 		write(bt)
-
-		// 初始化http
-		if len(c.addr) > 0 {
-			http.HandleFunc("/fast-buffer/probe", probe)
-			http.ListenAndServe(c.addr, nil)
-		}
-
 	})
 
 	go func() {

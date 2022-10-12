@@ -143,6 +143,18 @@ func (b *buffer) Exist(key string) bool {
 	return ok
 }
 
+func (b *buffer) Probe() map[string]map[string]interface{} {
+	_dict := map[string]map[string]interface{}{}
+	for k, v := range dict {
+		_dict[k] = map[string]interface{}{
+			"hash": v.hash,
+			"hot":  v.hot,
+			"ttl":  v.ttl,
+		}
+	}
+	return _dict
+}
+
 func (b *buffer) refresh(key, field string) {
 	if err := c.redis.Publish(context.Background(), defaultChannle, util.String(key, field)).Err(); err != nil {
 		log.Println("Hget.error", err.Error())
