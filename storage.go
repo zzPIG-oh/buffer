@@ -50,7 +50,6 @@ func NewBufferClient() Buffer {
 }
 
 func (b *buffer) Hset(key, field string, value interface{}) {
-	// 任何非0的数字与运算后都大于0;
 	//	不会报错;直接返回
 	if len(key) < 1 || len(field) < 1 {
 		return
@@ -58,6 +57,8 @@ func (b *buffer) Hset(key, field string, value interface{}) {
 
 	kv, ok := dict[key]
 	if !ok {
+
+		dictRW.Lock()
 		dict[key] = &inner{
 			hash: map[string]interface{}{
 				field: value,
@@ -65,10 +66,14 @@ func (b *buffer) Hset(key, field string, value interface{}) {
 			rw:  sync.RWMutex{},
 			ttl: defaultTTL,
 		}
+		dictRW.Unlock()
+
 		return
 	}
 
+	kv.rw.Lock()
 	kv.hash[field] = value
+	kv.rw.Unlock()
 
 	if c.hasRedis {
 		c.redis.HSet(context.Background(), key, field, value)
@@ -130,7 +135,9 @@ func (b *buffer) Hdel(key, field string) {
 	}
 	dictRW.RUnlock()
 
+	kv.rw.Lock()
 	delete(kv.hash, field)
+	kv.rw.Unlock()
 
 	if c.hasRedis {
 		c.redis.HDel(context.Background(), key, field)
