@@ -1,8 +1,8 @@
 package buffer
 
 import (
+	"buffer/util"
 	"context"
-	"fast-buffer/util"
 	"log"
 	"sync"
 	"sync/atomic"

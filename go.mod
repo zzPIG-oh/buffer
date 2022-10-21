@@ -1,4 +1,4 @@
-module fast-buffer
+module buffer
 
 go 1.17
 

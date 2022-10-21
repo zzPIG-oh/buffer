@@ -1,9 +1,9 @@
 package buffer
 
 import (
+	"buffer/util"
 	"context"
 	"encoding/json"
-	"fast-buffer/util"
 	"io"
 	"log"
 	"os"
