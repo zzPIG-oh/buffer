@@ -21,14 +21,19 @@ type (
 		//	souce当前仅支持本地
 		//	todo:从oss拉取数据
 		source   string
+		limit    float64
 		hasRedis bool
 		redis    *redis.Client
-		addr     string
 	}
 )
 
 var c = config{
 	source: defaultFile,
+	limit:  defaultMemory,
+}
+
+func SetMemoryLimit(limit float64) {
+	c.limit = limit
 }
 
 func SetSource(file string) {
@@ -49,8 +54,4 @@ func SetRedis(client *redis.Client) {
 	}
 
 	c.hasRedis = true
-}
-
-func SetAddr(addr string) {
-	c.addr = addr
 }

@@ -37,7 +37,7 @@ func patrol() {
 	}
 
 	// 小于20m的内存不做冷热数据删除
-	if unsafe.Sizeof(dict) < uintptr((defaultMemory * math.Pow(1024, 3))) {
+	if unsafe.Sizeof(dict) < uintptr((c.limit * math.Pow(1024, 3))) {
 		return
 	}
 
