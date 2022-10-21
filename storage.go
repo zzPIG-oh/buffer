@@ -146,13 +146,22 @@ func (b *buffer) Hdel(key, field string) {
 }
 
 func (b *buffer) Exist(key string) bool {
+
+	dictRW.RLock()
 	_, ok := dict[key]
+	dictRW.RUnlock()
+
 	return ok
 }
 
 func (b *buffer) Probe() map[string]map[string]interface{} {
 	_dict := map[string]map[string]interface{}{}
-	for k, v := range dict {
+
+	// 脱离全局
+	// 不占用锁资源
+	newDict := dict
+
+	for k, v := range newDict {
 		_dict[k] = map[string]interface{}{
 			"hash": v.hash,
 			"hot":  v.hot,
@@ -163,7 +172,7 @@ func (b *buffer) Probe() map[string]map[string]interface{} {
 }
 
 func (b *buffer) refresh(key, field string) {
-	if err := c.redis.Publish(context.Background(), defaultChannle, util.String(key, field)).Err(); err != nil {
+	if err := c.redis.Publish(context.Background(), c.channel, util.String(key, field)).Err(); err != nil {
 		log.Println("Hget.error", err.Error())
 	}
 }

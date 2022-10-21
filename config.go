@@ -12,7 +12,7 @@ var (
 	defaultFile            = ""
 	defaultTTL     int64   = -1
 	defaultMemory  float64 = 20
-	defaultChannle         = "sync-local"
+	defaultChannel         = "sync-local"
 )
 
 type (
@@ -23,13 +23,19 @@ type (
 		source   string
 		limit    float64
 		hasRedis bool
+		channel  string
 		redis    *redis.Client
 	}
 )
 
 var c = config{
-	source: defaultFile,
-	limit:  defaultMemory,
+	source:  defaultFile,
+	limit:   defaultMemory,
+	channel: defaultChannel,
+}
+
+func SetSyncChannel(channel string) {
+	c.channel = channel
 }
 
 func SetMemoryLimit(limit float64) {
