@@ -14,6 +14,10 @@ type Buffer interface {
 
 	// 判断健存不存在
 	Exist(key string) bool
+
+	// Probe
+	// 	数据探针
+	Probe() map[string]map[string]interface{}
 }
 
 type Result interface {
