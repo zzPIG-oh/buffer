@@ -23,7 +23,7 @@ func Start() {
 	once.Do(func() {
 
 		// 加载数据源
-		bt, err := read(defaultFile)
+		bt, err := read()
 		if err != nil {
 			return
 		}
@@ -42,9 +42,9 @@ func Start() {
 	go syncBuffer()
 }
 
-func read(file string) ([]byte, error) {
+func read() ([]byte, error) {
 
-	fd, err := os.Open(defaultFile)
+	fd, err := os.Open(c.source)
 	if err != nil {
 		log.Println("source.open error", err.Error())
 		return nil, err
