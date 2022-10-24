@@ -1,7 +1,6 @@
 package buffer
 
 import (
-	"buffer/util"
 	"context"
 	"encoding/json"
 	"io"
@@ -9,6 +8,8 @@ import (
 	"os"
 	"sync"
 	"time"
+
+	"github.com/zzPIG-oh/buffer/util"
 )
 
 var (

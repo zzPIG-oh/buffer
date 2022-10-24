@@ -1,12 +1,13 @@
 package buffer
 
 import (
-	"buffer/util"
 	"context"
 	"log"
 	"sync"
 	"sync/atomic"
 	"time"
+
+	"github.com/zzPIG-oh/buffer/util"
 )
 
 // - inner

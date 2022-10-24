@@ -1,4 +1,4 @@
-module buffer
+module github.com/zzPIG-oh/buffer
 
 go 1.17
 
