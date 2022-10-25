@@ -79,7 +79,7 @@ func (b *buffer) Hset(key, field string, value interface{}) {
 
 	if c.hasRedis {
 		c.redis.HSet(context.Background(), key, field, value)
-		// b.refresh(key, field)
+		b.refresh(key, field)
 	}
 
 }
@@ -174,7 +174,8 @@ func (b *buffer) Probe() map[string]map[string]interface{} {
 }
 
 func (b *buffer) refresh(key, field string) {
-	if err := c.redis.Publish(context.Background(), c.channel, util.String(key, field)).Err(); err != nil && err.Error() != redis.Nil.Error() {
+	err := c.redis.Publish(context.Background(), c.channel, util.String(key, field, c.tag)).Err()
+	if err != nil && err.Error() != redis.Nil.Error() {
 		log.Println("refresh.Publish.error", err.Error())
 	}
 }

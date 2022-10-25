@@ -6,7 +6,6 @@ func String(str ...string) string {
 	return strings.Join(str, "%")
 }
 
-func Spilt(old string) (key, field string) {
-	r := strings.Split(old, "%")
-	return r[0], r[1]
+func Spilt(old string) []string {
+	return strings.Split(old, "%")
 }

@@ -39,7 +39,7 @@ func Start() {
 		}
 	}()
 
-	// go syncBuffer()
+	go syncBuffer()
 }
 
 func read() ([]byte, error) {
@@ -87,7 +87,16 @@ func syncBuffer() {
 	}
 	b := &buffer{}
 	for msg := range c.redis.PSubscribe(context.Background(), c.channel).Channel() {
-		k, f := util.Spilt(msg.Payload)
-		b.Hdel(k, f)
+		args := util.Spilt(msg.Payload)
+		if len(args) < 3 {
+			continue
+		}
+
+		// 不处理自己的消息
+		if args[2] == c.tag {
+			continue
+		}
+
+		b.Hdel(args[0], args[1])
 	}
 }

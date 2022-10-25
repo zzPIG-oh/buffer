@@ -3,7 +3,11 @@ package buffer
 import (
 	"context"
 	"log"
+	"math"
+	"math/rand"
+	"strconv"
 	"strings"
+	"time"
 
 	"github.com/go-redis/redis/v8"
 )
@@ -25,6 +29,7 @@ type (
 		hasRedis bool
 		channel  string
 		redis    *redis.Client
+		tag      string
 	}
 )
 
@@ -32,6 +37,13 @@ var c = config{
 	source:  defaultFile,
 	limit:   defaultMemory,
 	channel: defaultChannel,
+	tag:     tag(),
+}
+
+func tag() string {
+	rand.Seed(time.Now().UnixMilli())
+	nonce := rand.Int63n(int64(math.Pow(2, 64)))
+	return strconv.FormatInt(nonce, 10)
 }
 
 func SetSyncChannel(channel string) {
