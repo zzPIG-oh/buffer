@@ -7,6 +7,7 @@ import (
 	"sync/atomic"
 	"time"
 
+	"github.com/go-redis/redis/v8"
 	"github.com/zzPIG-oh/buffer/util"
 )
 
@@ -90,7 +91,7 @@ func (b *buffer) Hget(key, field string) (r Result) {
 		if r.IsEmpty() && c.hasRedis {
 
 			val, err := c.redis.HGet(context.Background(), key, field).Result()
-			if err != nil {
+			if err != nil && err.Error() != redis.Nil.Error() {
 				log.Println("Hget.error", err.Error())
 				return
 			}
@@ -173,7 +174,7 @@ func (b *buffer) Probe() map[string]map[string]interface{} {
 }
 
 func (b *buffer) refresh(key, field string) {
-	if err := c.redis.Publish(context.Background(), c.channel, util.String(key, field)).Err(); err != nil {
-		log.Println("Hget.error", err.Error())
+	if err := c.redis.Publish(context.Background(), c.channel, util.String(key, field)).Err(); err != nil && err.Error() != redis.Nil.Error() {
+		log.Println("refresh.Publish.error", err.Error())
 	}
 }
