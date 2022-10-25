@@ -79,7 +79,7 @@ func (b *buffer) Hset(key, field string, value interface{}) {
 
 	if c.hasRedis {
 		c.redis.HSet(context.Background(), key, field, value)
-		b.refresh(key, field)
+		// b.refresh(key, field)
 	}
 
 }

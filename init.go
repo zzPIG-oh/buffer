@@ -39,7 +39,7 @@ func Start() {
 		}
 	}()
 
-	go syncBuffer()
+	// go syncBuffer()
 }
 
 func read() ([]byte, error) {
