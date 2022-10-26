@@ -92,8 +92,8 @@ func (b *buffer) Hget(key, field string) (r Result) {
 		if r.IsEmpty() && c.hasRedis {
 
 			val, err := c.redis.HGet(context.Background(), key, field).Result()
-			if err != nil && err.Error() != redis.Nil.Error() {
-				log.Println("Hget.error", err.Error())
+			if err != nil {
+				log.Println("Hget.error,reason:", err.Error())
 				return
 			}
 
