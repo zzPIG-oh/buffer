@@ -88,7 +88,7 @@ func syncBuffer() {
 	b := &buffer{}
 	for msg := range c.redis.PSubscribe(context.Background(), c.channel).Channel() {
 
-		log.Println("message:", msg.Payload)
+		log.Println("syncBuffer.message:", msg.Payload)
 
 		args := util.Spilt(msg.Payload)
 
