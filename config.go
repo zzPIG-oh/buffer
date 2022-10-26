@@ -42,7 +42,7 @@ var c = config{
 
 func tag() string {
 	rand.Seed(time.Now().UnixMilli())
-	nonce := rand.Int63n(int64(math.Pow(2, 64)))
+	nonce := rand.Int63n(int64(math.Pow(2, 32)))
 	return strconv.FormatInt(nonce, 10)
 }
 

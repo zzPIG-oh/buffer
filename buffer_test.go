@@ -2,6 +2,7 @@ package buffer
 
 import (
 	"fmt"
+	"log"
 	"testing"
 )
 
@@ -20,4 +21,8 @@ func TestBufferSet(t *testing.T) {
 	bc.Hset("keyword", "zhangzhen", Empty)
 	bl2 := bc.Hget("keyword", "zhangzhen").IsEmpty()
 	fmt.Println(bl1, bl2)
+}
+
+func TestRand(t *testing.T) {
+	log.Println(tag())
 }
