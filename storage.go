@@ -134,10 +134,10 @@ func (b *buffer) Hdel(key, field string) {
 
 	dictRW.RLock()
 	kv, ok := dict[key]
+	dictRW.RUnlock()
 	if !ok {
 		return
 	}
-	dictRW.RUnlock()
 
 	kv.rw.Lock()
 	delete(kv.hash, field)
