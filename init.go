@@ -87,7 +87,11 @@ func syncBuffer() {
 	}
 	b := &buffer{}
 	for msg := range c.redis.PSubscribe(context.Background(), c.channel).Channel() {
+
+		log.Println("message:", msg.Payload)
+
 		args := util.Spilt(msg.Payload)
+
 		if len(args) < 3 {
 			continue
 		}

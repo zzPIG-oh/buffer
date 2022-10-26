@@ -52,6 +52,7 @@ func NewBufferClient() Buffer {
 }
 
 func (b *buffer) Hset(key, field string, value interface{}) {
+
 	//	不会报错;直接返回
 	if len(key) < 1 || len(field) < 1 {
 		return
@@ -97,6 +98,7 @@ func (b *buffer) Hget(key, field string) (r Result) {
 			}
 
 			r = &result{result: val}
+
 			b.Hset(key, field, val)
 
 		}
@@ -170,6 +172,7 @@ func (b *buffer) Probe() map[string]map[string]interface{} {
 			"ttl":  v.ttl,
 		}
 	}
+
 	return _dict
 }
 
