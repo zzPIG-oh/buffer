@@ -79,8 +79,11 @@ func (b *buffer) Hset(key, field string, value interface{}) {
 	kv.rw.Unlock()
 
 	if c.hasRedis {
-		c.redis.HSet(context.Background(), key, field, value)
-		b.refresh(key, field)
+		go func() {
+			c.redis.HSet(context.Background(), key, field, value)
+			c.redis.Expire(context.Background(), key, c.redisExpire)
+			b.refresh(key, field)
+		}()
 	}
 
 }

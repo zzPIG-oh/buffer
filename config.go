@@ -13,10 +13,11 @@ import (
 )
 
 var (
-	defaultFile            = ""
-	defaultTTL     int64   = -1
-	defaultMemory  float64 = 20
-	defaultChannel         = "sync-local"
+	defaultFile                = ""
+	defaultTTL         int64   = -1
+	defaultMemory      float64 = 20
+	defaultChannel             = "sync-local"
+	defaultRedisExpire         = 48 * time.Hour
 )
 
 type (
@@ -24,26 +25,32 @@ type (
 		// source
 		//	souce当前仅支持本地
 		//	todo:从oss拉取数据
-		source   string
-		limit    float64
-		hasRedis bool
-		channel  string
-		redis    *redis.Client
-		tag      string
+		source      string
+		limit       float64
+		hasRedis    bool
+		channel     string
+		redis       *redis.Client
+		tag         string
+		redisExpire time.Duration
 	}
 )
 
 var c = config{
-	source:  defaultFile,
-	limit:   defaultMemory,
-	channel: defaultChannel,
-	tag:     tag(),
+	source:      defaultFile,
+	limit:       defaultMemory,
+	channel:     defaultChannel,
+	tag:         tag(),
+	redisExpire: defaultRedisExpire,
 }
 
 func tag() string {
 	rand.Seed(time.Now().UnixMilli())
 	nonce := rand.Int63n(int64(math.Pow(2, 32)))
 	return strconv.FormatInt(nonce, 10)
+}
+
+func SetRedisExpire(ex time.Duration) {
+	c.redisExpire = ex
 }
 
 func SetSyncChannel(channel string) {
